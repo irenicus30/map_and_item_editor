@@ -1,5 +1,7 @@
 // @flow
-import { CHANGE_TEXT_FIELD, CHANGE_ID, CHANGE_TILESET, SELECT_IMAGE, MAP_UPDATE, MAP_DELETE } from '../actions/maps';
+import {
+  CHANGE_TEXT_FIELD,
+  CHANGE_ID, CHANGE_TILESET, SELECT_IMAGE, MAP_UPDATE, MAP_DELETE } from '../actions/maps';
 import type { Action } from './types';
 
 const defaultMapData = require('../../otb/opentibiasprites/sprites/map.json');

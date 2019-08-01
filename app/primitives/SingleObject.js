@@ -21,22 +21,19 @@ export default function({ data, spritesData, scale }: Props) {
         style={{
           width: singleSpriteSize,
           height: singleSpriteSize,
-          transform: `scale(${scale})`,
           opacity: 1,
-          background: "white"
+          background: 'silver'
         }}
       />
     </div>
   );
- 
-  let objectId = 0;
-  let imageId = 1;
-  let sprites = [];
-  if (data && data.objectId) {
-    objectId = data.objectId;
-    { sprites } = data;
-    [imageId] = sprites;
+
+  if (!data || !data.objectId) {
+    return placeholder;
   }
+
+  const { objectId, sprites } = data;
+  const [imageId] = sprites;
 
   let lowerId = 1;
   let higherId = spritesPerAtlas;
@@ -44,11 +41,6 @@ export default function({ data, spritesData, scale }: Props) {
     lowerId += spritesPerAtlas;
     higherId += spritesPerAtlas;
   }
-
-  const fileName = `${lowerId.toString()}-${higherId.toString()}.png`;
-
-  const fullFileName = path.join(__dirname, '..', pathToSprites, fileName);
-  // console.log(fullFileName);
 
   let x = 0;
   let y = 0;

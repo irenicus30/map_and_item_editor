@@ -12,9 +12,13 @@ export default () => (
     <Switch>
       <Route path={routes.COUNTER} component={CounterPage} />
       <Route path={routes.OBJECTS} component={ObjectsPage} />
-      <Route path={routes.ITEMS} component={ObjectsPage} />
-      <Route path={routes.MAP} component={MapsPage} />
       <Route exact path={routes.HOME} component={HomePage} />
     </Switch>
   </App>
 );
+
+/*
+
+      <Route path={routes.ITEMS} component={ObjectsPage} />
+      <Route path={routes.MAP} component={MapsPage} />
+*/

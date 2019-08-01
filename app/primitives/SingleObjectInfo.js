@@ -5,25 +5,28 @@ import path from 'path';
 const spritesPerAtlas = 256;
 const spritesPerAtlasX = 16;
 // const spritesPerAtlasY = 16;
-const singleObjectPixels = 32;
+const singleSpritePixels = 32;
 
 type Props = {
-  id: number,
   data: object,
   pathToSprites: string,
   scale: number
 };
 
-export default function({ id, data, pathToSprites, scale }: Props) {
-  const singleObjectSize = singleObjectPixels * scale;
-
-  let objectId = 0;
-  let imageId = 1;
-  if (data !== undefined) {
-    objectId = data.objectId;
-    const { sprites } = data;
-    [imageId] = sprites;
-  }
+export default function({ data, spritesData, scale }: Props) {
+  const singleSpriteSize = singleSpritePixels * scale;
+  const placeholder = (
+    <div>
+      <div
+        style={{
+          width: singleSpriteSize,
+          height: singleSpriteSize,
+          opacity: 1,
+          background: 'aqua'
+        }}
+      />
+    </div>
+  );
 
   let lowerId = 1;
   let higherId = spritesPerAtlas;
@@ -32,27 +35,22 @@ export default function({ id, data, pathToSprites, scale }: Props) {
     higherId += spritesPerAtlas;
   }
 
-  const fileName = `${lowerId.toString()}-${higherId.toString()}.png`;
-
-  const fullFileName = path.join(__dirname, '..', pathToSprites, fileName);
-  // console.log(fullFileName);
-
   let x = 0;
   let y = 0;
   let offset = imageId - lowerId;
   while (offset > 0) {
     offset -= 1;
-    x += singleObjectPixels;
-    if (x >= singleObjectPixels * spritesPerAtlasX) {
+    x += singleSpritePixels;
+    if (x >= singleSpritePixels * spritesPerAtlasX) {
       x = 0;
-      y += singleObjectPixels;
+      y += singleSpritePixels;
     }
   }
 
   x *= scale;
   y *= scale;
-  x -= (singleObjectPixels * scale * (scale - 1)) / 2;
-  y -= (singleObjectPixels * scale * (scale - 1)) / 2;
+  x -= (singleSpritePixels * scale * (scale - 1)) / 2;
+  y -= (singleSpritePixels * scale * (scale - 1)) / 2;
   // console.log(`x=${x} y=${y}`);
 
   return (

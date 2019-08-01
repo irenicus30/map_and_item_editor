@@ -9,12 +9,11 @@ const singleObjectPixels = 32;
 
 type Props = {
   id: number,
-  data: object,
-  pathToSprites: string,
+  spritesData: object,
   scale: number
 };
 
-export default function({ id, data, pathToSprites, scale }: Props) {
+export default function({ id, spritesData, scale }: Props) {
   const singleObjectSize = singleObjectPixels * scale;
 
   let objectId = 0;

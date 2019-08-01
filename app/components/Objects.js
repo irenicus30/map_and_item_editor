@@ -1,6 +1,4 @@
 // @flow
-import fs from 'fs';
-import path from 'path';
 import React from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -27,12 +25,14 @@ const useStyles = makeStyles({
   }
 });
 
-const pathToForgottenserverObjects = 'otb/forgottenserver/sprites';
-const pathToOpentibiaspritesObjects = 'otb/opentibiasprites/sprites';
+const pathToForgottenserverData = 'otb/forgottenserver';
+const pathToOpentibiaspritesData = 'otb/opentibiasprites';
 
 const scale = 2;
+const scale2 = 5;
 const singleSpritePixels = 32;
 const singleSpriteSize = singleSpritePixels * scale;
+const singleSpriteSize2 = singleSpriteSize * scale2;
 
 const objectsInX = 8;
 const objectsInY = 8;
@@ -67,13 +67,15 @@ export default function(props: Props) {
   const {
     objectTextField,
     objectStartId,
-    objectselectedId,
+    objectSelectedId,
     spriteTextField,
     spriteStartId,
     spriteSelectedId,
     objectsData,
     spritesData
   } = objects;
+
+  const itemSelectedId = objectSelectedId - 101;
 
   let itemStartId = objectStartId - 101;
   if (!itemStartId) itemStartId = 0;
@@ -97,14 +99,14 @@ export default function(props: Props) {
               <Button
                 variant="outlined"
                 color="primary"
-                onClick={() => changeTileset(pathToForgottenserverSprites)}
+                onClick={() => changeTileset(pathToForgottenserverData)}
               >
                 tileset forgottenserver
               </Button>
               <Button
                 variant="outlined"
                 color="primary"
-                onClick={() => changeTileset(pathToOpentibiaspritesSprites)}
+                onClick={() => changeTileset(pathToOpentibiaspritesData)}
               >
                 tileset opentibiasprites
               </Button>
@@ -125,14 +127,18 @@ export default function(props: Props) {
               <Button
                 variant="outlined"
                 color="primary"
-                onClick={() => changeObjectStartId(objectStartId-objectsOnScreen)}
+                onClick={() =>
+                  changeObjectStartId(objectStartId - objectsOnScreen)
+                }
               >
                 Prev {objectsOnScreen} images
               </Button>
               <Button
                 variant="outlined"
                 color="primary"
-                onClick={() => changeObjectStartId(objectStartId+objectsOnScreen)}
+                onClick={() =>
+                  changeObjectStartId(objectStartId + objectsOnScreen)
+                }
               >
                 Next {objectsOnScreen} images
               </Button>
@@ -140,15 +146,22 @@ export default function(props: Props) {
                 {`items ${objectStartId} to ${objectEndId - 1}`}
               </Typography>
             </CardContent>
-            <SingleObjectInfo
-              id={objectselectedId}
-              data={dat.items[objectselectedId]}
-              spritesData={spritesData}
-              scale={scale2}
-            />
+            <div
+              style={{
+                width: singleSpriteSize2,
+                height: singleSpriteSize2,
+                overflow: 'hidden'
+              }}
+            >
+              <SingleObjectInfo
+                data={objectsData.items[itemSelectedId]}
+                spritesData={spritesData}
+                scale={scale2}
+              />
+            </div>
           </Card>
         </Grid>
-        <Grid item xs={8}  sm={4}>
+        <Grid item xs={8} sm={4}>
           <Typography variand="h5" component="h2">
             {`OBJECTS`}
           </Typography>
@@ -161,8 +174,8 @@ export default function(props: Props) {
             }}
           >
             {Object.keys(objectsData.items)
-              .slice(objectStartId, objectEndId)
-              .map((data, _index) => {
+              .slice(itemStartId, itemEndId)
+              .map(data => {
                 return (
                   <div
                     key={data.objectId}
@@ -196,43 +209,43 @@ export default function(props: Props) {
             }}
           >
             {Array.from(
-              {length: spriteStartId-spriteEndId+1},
+              { length: spriteStartId - spriteEndId + 1 },
               (v, k) => spriteStartId + k
-            ).map((id, _index) => {
-                return (
+            ).map(id => {
+              return (
                   <div
-                    key={singleData.objectId}
+                    key={id}
                     style={{
                       width: singleSpriteSize,
                       height: singleSpriteSize,
                       overflow: 'hidden'
                     }}
-                    onClick={() => spriteSelect(key)}
+                    onClick={() => selectSprite(id)}
                   >
-                    <SingleSprite
-                      id={id}
-                      spritesData={spritesData}
-                      scale={scale}
-                    />
-                  </div>
-                );
-              })}
+                  <SingleSprite
+                    id={id}
+                    spritesData={spritesData}
+                    scale={scale}
+                  />
+                </div>
+              );
+            })}
           </div>
         </Grid>
-        <Grid item xs={4}  sm={2}>
+        <Grid item xs={4} sm={2}>
           <Card className={classes.card}>
             <CardContent>
               <Button
                 variant="outlined"
                 color="primary"
-                onClick={() => changeTileset(pathToForgottenserverSprites)}
+                onClick={() => changeTileset(pathToForgottenserverData)}
               >
                 tileset forgottenserver
               </Button>
               <Button
                 variant="outlined"
                 color="primary"
-                onClick={() => changeTileset(pathToOpentibiaspritesSprites)}
+                onClick={() => changeTileset(pathToOpentibiaspritesData)}
               >
                 tileset opentibiasprites
               </Button>
@@ -253,25 +266,37 @@ export default function(props: Props) {
               <Button
                 variant="outlined"
                 color="primary"
-                onClick={() => changeSpriteStartId(spriteStartId-spritesOnScreen)}
+                onClick={() =>
+                  changeSpriteStartId(spriteStartId - spritesOnScreen)
+                }
               >
                 Prev {spritesOnScreen} sprites
               </Button>
               <Button
                 variant="outlined"
                 color="primary"
-                onClick={() => changeSpriteStartId(spriteStartId+spritesOnScreen)}
+                onClick={() =>
+                  changeSpriteStartId(spriteStartId + spritesOnScreen)
+                }
               >
                 Next {spritesOnScreen} sprites
               </Button>
               <Typography variand="h5" component="h2">
                 {`sprites ${spriteStartId} to ${spriteEndId - 1}`}
               </Typography>
-              <SingleObjectInfo
-                id={spriteSelectedId}
-                spritesData={spritesData}
-                scale={scale2}
-              />
+              <div
+                style={{
+                  width: singleSpriteSize2,
+                  height: singleSpriteSize2,
+                  overflow: 'hidden'
+                }}
+              >
+                <SingleSpriteInfo
+                  id={spriteSelectedId}
+                  spritesData={spritesData}
+                  scale={scale2}
+                />
+              </div>
             </CardContent>
           </Card>
         </Grid>
