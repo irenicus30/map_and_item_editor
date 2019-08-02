@@ -1,16 +1,15 @@
 import fs from 'fs';
 import path from 'path';
-import { PNG  from 'pngjs';
 
-const rootPath = '../..'; // this is folder root/app/datamanipulators
 const datFileName = 'dat.json';
 const mapFileName = 'map.json';
 const itemsFileName = 'items.json';
 const itemsFileNameXML = 'items.xml';
 const spritesFolderName = 'sprites';
 
+const rootPath = '../..'; // this is folder root/app/datamanipulators
 
-export function loadObjectsData(pathToData) {
+export function loadObjectsData(rootPath, pathToData) {
     const fullPathToDat = path.join( rootPath, pathToData, datFileName);
 
     const rawdata = fs.readFileSync (fullPathToDat);
@@ -18,14 +17,18 @@ export function loadObjectsData(pathToData) {
     return dat;
 }
 
-export function loadSpritesData(pathToData) {
+export function loadSpritesData(rootPath, pathToData) {
     const fullPathToSprites = path.join( rootPath, pathToData, spritesFolderName);
     const files = fs.readdirSync (fullPathToSprites);
 
-    const sprites = files.map( function(fileName) {
-        const rawdata = fs.readFileSync(fileName);
-        const png = PNG.sync.read(rawdata);
+    const sprites = {};
 
+    files.forEach( function(fileName) {
+        const fullFileName = path.join( rootPath, pathToData, spritesFolderName, fileName);
+        const name = fileName.slice(0, -4);
+
+        const data = fs.readFileSync(fullFileName);
+        sprites[name] = data;
     });
     return sprites;
 }

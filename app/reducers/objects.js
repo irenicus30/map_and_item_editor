@@ -9,24 +9,24 @@ import {
   SELECT_SPRITE
 } from '../actions/objects';
 import type { Action } from './types';
-import {
-  loadObjectsData,
-  loadSpritesData
-} from '../datamanipulators/loaders';
+import { loadObjectsData, loadSpritesData } from '../datamanipulators/loaders';
 
 const defaultPathToData = 'otb/opentibiasprites';
-const defaultObjectStartId = 101;
-const defaultSelectedObject = 0;
-const defaultSpriteStartId = 101;
-const defaultSelectedSprite = 0;
+const defaultObjectStartId = 100;
+const defaultSelectedObject = 100;
+const defaultSpriteStartId = 1;
+const defaultSelectedSprite = 1;
+const defaultObjectSelectedSpriteIndex = 0;
 
-let defaultObjectsData = loadObjectsData(defaultPathToData);
-let defaultSpritesData = loadSpritesData(defaultPathToData);
+const rootPath = '.'; // this is folder root/app/reducers
+let defaultObjectsData = loadObjectsData(rootPath, defaultPathToData);
+let defaultSpritesData = loadSpritesData(rootPath, defaultPathToData);
 
 export default function objects(
   state = {
     objectStartId: defaultObjectStartId,
     objectSelectedId: defaultSelectedObject,
+    objectSelectedSpriteIndex: defaultObjectSelectedSpriteIndex,
     spriteStartId: defaultSpriteStartId,
     spriteSelectedId: defaultSelectedSprite,
     objectsData: defaultObjectsData,
@@ -51,8 +51,19 @@ export default function objects(
     case CHANGE_OBJECT_START_ID:
       return { ...state, objectStartId: action.objectStartId };
 
-    case SELECT_OBJECT:
-      return { ...state, objectSelectedId: action.objectSelectedId };
+    case SELECT_OBJECT: {
+      let { objectSelectedSpriteIndex } = state;
+      if (state.objectSelectedId === action.objectSelectedId) {
+        objectSelectedSpriteIndex += 1;
+      } else {
+        objectSelectedSpriteIndex = 0;
+      }
+      return {
+        ...state,
+        objectSelectedId: action.objectSelectedId,
+        objectSelectedSpriteIndex
+      };
+    }
 
     case CHANGE_SPRITE_TEXT_FIELD:
       return { ...state, spriteTextField: action.spriteTextField };

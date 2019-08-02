@@ -1,11 +1,10 @@
 // @flow
 import React from 'react';
-import path from 'path';
 
 const spritesPerAtlas = 256;
 const spritesPerAtlasX = 16;
 // const spritesPerAtlasY = 16;
-const singleObjectPixels = 32;
+const singleSpritePixels = 32;
 
 type Props = {
   id: number,
@@ -14,15 +13,23 @@ type Props = {
 };
 
 export default function({ id, spritesData, scale }: Props) {
-  const singleObjectSize = singleObjectPixels * scale;
-
-  let objectId = 0;
-  let imageId = 1;
-  if (data !== undefined) {
-    objectId = data.objectId;
-    const { sprites } = data;
-    [imageId] = sprites;
+  const singleSpriteSize = singleSpritePixels * scale;
+  const placeholder = (
+    <div>
+      <div
+        style={{
+          width: singleSpriteSize,
+          height: singleSpriteSize,
+          opacity: 1,
+          background: 'aqua'
+        }}
+      />
+    </div>
+  );
+  if (!id || id < 1) {
+    return placeholder;
   }
+  const imageId = id;
 
   let lowerId = 1;
   let higherId = spritesPerAtlas;
@@ -31,40 +38,40 @@ export default function({ id, spritesData, scale }: Props) {
     higherId += spritesPerAtlas;
   }
 
-  const fileName = `${lowerId.toString()}-${higherId.toString()}.png`;
-
-  const fullFileName = path.join(__dirname, '..', pathToSprites, fileName);
-  // console.log(fullFileName);
+  const name = `${lowerId}-${higherId}`;
 
   let x = 0;
   let y = 0;
   let offset = imageId - lowerId;
   while (offset > 0) {
     offset -= 1;
-    x += singleObjectPixels;
-    if (x >= singleObjectPixels * spritesPerAtlasX) {
+    x += singleSpritePixels;
+    if (x >= singleSpritePixels * spritesPerAtlasX) {
       x = 0;
-      y += singleObjectPixels;
+      y += singleSpritePixels;
     }
   }
 
   x *= scale;
   y *= scale;
-  x -= (singleObjectPixels * scale * (scale - 1)) / 2;
-  y -= (singleObjectPixels * scale * (scale - 1)) / 2;
-  // console.log(`x=${x} y=${y}`);
+  x -= (singleSpritePixels * scale * (scale - 1)) / 2;
+  y -= (singleSpritePixels * scale * (scale - 1)) / 2;
+  console.log(`x=${x} y=${y}`);
+
+  const prefix = 'data:image/png;base64,';
+  const src = prefix + spritesData[name].toString('base64');
 
   return (
     <div>
       <div
         style={{
-          width: singleObjectSize,
-          height: singleObjectSize,
+          width: singleSpriteSize,
+          height: singleSpriteSize,
           transform: `translateX(${-x}px) translateY(${-y}px) scale(${scale})`,
           opacity: 0.8
         }}
       >
-        <img src={fullFileName} alt={`clientId: ${imageId}`} />
+        <img src={src} alt={`spriteId: ${imageId}`} />
       </div>
     </div>
   );

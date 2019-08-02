@@ -1,5 +1,9 @@
 // @flow
 import type { GetState, Dispatch } from '../reducers/types';
+import {
+  loadObjectsData,
+  loadSpritesData
+} from '../datamanipulators/loaders';
 
 export const CHANGE_TILESET = 'CHANGE_TILESET';
 export const CHANGE_OBJECT_TEXT_FIELD = 'CHANGE_OBJECT_TEXT_FIELD';
@@ -9,15 +13,20 @@ export const CHANGE_SPRITE_TEXT_FIELD = 'SELECT_SPRITE_TEXT_FIELD';
 export const CHANGE_SPRITE_START_ID = 'SELECT_SPRITE_START_ID';
 export const SELECT_SPRITE = 'SELECT_SPRITE';
 
-export function changeTileset(pathToSprites: string) {
+const rootPath = '.'; // this is folder root/app/actions
+
+export function changeTileset(pathToSprites: string) {  
+  const objectsData = loadObjectsData(rootPath, pathToSprites);
+  const spritesData = loadSpritesData(rootPath, pathToSprites);
   return {
     type: CHANGE_TILESET,
-    pathToSprites
+    objectsData,
+    spritesData
   };
 }
 
 export function changeObjectTextField(event: object) {
-  let value = '101';
+  let value = '100';
   if (event.target && event.target.value)
     value = event.target.value;
   return {
@@ -28,25 +37,25 @@ export function changeObjectTextField(event: object) {
 
 export function changeObjectStartId(textFieldValue: string) {
   let value = parseInt(textFieldValue, 10);
-  if (!value) value = 101;
-  if (value < 101) value = 101;
+  if (!value) value = 100;
+  if (value < 100) value = 100;
   return {
     type: CHANGE_OBJECT_START_ID,
     objectStartId: value
   };
 }
 
-export function selectObject(selectedId: any) {
-  const integerSelectedId = parseInt(selectedId, 10);
-  if (isNaN(integerSelectedId))
+export function selectObject(data: any) {
+  const { objectId } = data;
+  if (isNaN(objectId))
     return {
       type: SELECT_OBJECT,
-      selectedId: 0
+      selectedId: 100
     };
 
   return {
     type: SELECT_OBJECT,
-    objectSelectedId: integerSelectedId
+    objectSelectedId: objectId
   };
 }
 
@@ -70,16 +79,15 @@ export function changeSpriteStartId(textFieldValue: string) {
   };
 }
 
-export function selectSprite(selectedId: any) {
-  const integerSelectedId = parseInt(selectedId, 10);
-  if (isNaN(integerSelectedId))
+export function selectSprite(id: any) {
+  if (isNaN(id))
     return {
       type: SELECT_SPRITE,
-      selectedId: 0
+      selectedId: 1
     };
 
   return {
     type: SELECT_SPRITE,
-    spriteSelectedId: integerSelectedId
+    spriteSelectedId: id
   };
 }

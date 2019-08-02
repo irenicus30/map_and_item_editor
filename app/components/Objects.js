@@ -22,6 +22,9 @@ const useStyles = makeStyles({
   },
   card: {
     maxWidth: 400
+  },
+  column: {
+    overflow: 'scroll'
   }
 });
 
@@ -29,23 +32,23 @@ const pathToForgottenserverData = 'otb/forgottenserver';
 const pathToOpentibiaspritesData = 'otb/opentibiasprites';
 
 const scale = 2;
-const scale2 = 5;
+const scale2 = 7;
 const singleSpritePixels = 32;
 const singleSpriteSize = singleSpritePixels * scale;
-const singleSpriteSize2 = singleSpriteSize * scale2;
+const singleSpriteSize2 = singleSpritePixels * scale2;
 
 const objectsInX = 8;
 const objectsInY = 8;
 
 const spritesInX = 6;
-const spritesInY = 6;
+const spritesInY = 12;
 
 type Props = {
   changeTileset: (value: string) => void,
   changeObjectTextField: (event: object) => void,
   changeObjectStartId: (value: string) => void,
   selectObject: (key: any) => void,
-  changeSprirteTextField: (event: object) => void,
+  changeSpriteTextField: (event: object) => void,
   changeSpriteStartId: (value: string) => void,
   selectSprite: (key: any) => void,
   objects: object
@@ -59,7 +62,7 @@ export default function(props: Props) {
     changeObjectTextField,
     changeObjectStartId,
     selectObject,
-    changeSprirteTextField,
+    changeSpriteTextField,
     changeSpriteStartId,
     selectSprite,
     objects
@@ -68,6 +71,7 @@ export default function(props: Props) {
     objectTextField,
     objectStartId,
     objectSelectedId,
+    objectSelectedSpriteIndex,
     spriteTextField,
     spriteStartId,
     spriteSelectedId,
@@ -75,9 +79,7 @@ export default function(props: Props) {
     spritesData
   } = objects;
 
-  const itemSelectedId = objectSelectedId - 101;
-
-  let itemStartId = objectStartId - 101;
+  let itemStartId = objectStartId - 100;
   if (!itemStartId) itemStartId = 0;
   if (itemStartId < 0) itemStartId = 0;
 
@@ -93,7 +95,7 @@ export default function(props: Props) {
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
-        <Grid item xs={4}  sm={2}>
+        <Grid item xs={4} sm={2} className={classes.column}>
           <Card className={classes.card}>
             <CardContent>
               <Button
@@ -114,7 +116,7 @@ export default function(props: Props) {
                 id="objectId"
                 type="number"
                 label="starting object id"
-                placeholder="101"
+                placeholder="100"
                 onChange={changeObjectTextField}
               />
               <Button
@@ -154,14 +156,27 @@ export default function(props: Props) {
               }}
             >
               <SingleObjectInfo
-                data={objectsData.items[itemSelectedId]}
+                data={objectsData.items[objectSelectedId]}
+                spriteIndex={objectSelectedSpriteIndex}
                 spritesData={spritesData}
                 scale={scale2}
               />
             </div>
+            <Typography variand="h5" component="h2">
+              {`cliendId ${objectsData.items[objectSelectedId].objectId}`}
+            </Typography>
+            <Typography variand="h5" component="h2">
+              {`spriteId ${
+                objectsData.items[objectSelectedId].sprites[
+                  objectSelectedSpriteIndex % objectsData.items[objectSelectedId].sprites.length
+                ]}`}
+            </Typography>
+            <Typography variand="h5" component="h2">
+              {`serverId ${undefined}`}
+            </Typography>
           </Card>
         </Grid>
-        <Grid item xs={8} sm={4}>
+        <Grid item xs={8} sm={4} className={classes.column}>
           <Typography variand="h5" component="h2">
             {`OBJECTS`}
           </Typography>
@@ -175,10 +190,11 @@ export default function(props: Props) {
           >
             {Object.keys(objectsData.items)
               .slice(itemStartId, itemEndId)
-              .map(data => {
+              .map(objectId => {
+                const data = objectsData.items[objectId];
                 return (
                   <div
-                    key={data.objectId}
+                    key={objectId}
                     style={{
                       width: singleSpriteSize,
                       height: singleSpriteSize,
@@ -196,7 +212,7 @@ export default function(props: Props) {
               })}
           </div>
         </Grid>
-        <Grid item xs={8}  sm={4}>
+        <Grid item xs={8} sm={4} className={classes.column}>
           <Typography variand="h5" component="h2">
             {`SPRITES`}
           </Typography>
@@ -209,7 +225,7 @@ export default function(props: Props) {
             }}
           >
             {Array.from(
-              { length: spriteStartId - spriteEndId + 1 },
+              { length: spriteEndId - spriteStartId },
               (v, k) => spriteStartId + k
             ).map(id => {
               return (
@@ -232,7 +248,7 @@ export default function(props: Props) {
             })}
           </div>
         </Grid>
-        <Grid item xs={4} sm={2}>
+        <Grid item xs={4} sm={2} className={classes.column}>
           <Card className={classes.card}>
             <CardContent>
               <Button
@@ -253,8 +269,8 @@ export default function(props: Props) {
                 id="spriteId"
                 type="number"
                 label="starting sprite id"
-                placeholder="101"
-                onChange={changeSprirteTextField}
+                placeholder="1"
+                onChange={changeSpriteTextField}
               />
               <Button
                 variant="outlined"
@@ -297,6 +313,9 @@ export default function(props: Props) {
                   scale={scale2}
                 />
               </div>
+              <Typography variand="h5" component="h2">
+                {`spriteId ${spriteSelectedId}`}
+              </Typography>
             </CardContent>
           </Card>
         </Grid>

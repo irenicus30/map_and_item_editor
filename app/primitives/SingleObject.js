@@ -1,6 +1,5 @@
 // @flow
 import React from 'react';
-import path from 'path';
 
 const spritesPerAtlas = 256;
 const spritesPerAtlasX = 16;
@@ -22,12 +21,11 @@ export default function({ data, spritesData, scale }: Props) {
           width: singleSpriteSize,
           height: singleSpriteSize,
           opacity: 1,
-          background: 'silver'
+          background: 'aqua'
         }}
       />
     </div>
   );
-
   if (!data || !data.objectId) {
     return placeholder;
   }
@@ -41,6 +39,8 @@ export default function({ data, spritesData, scale }: Props) {
     lowerId += spritesPerAtlas;
     higherId += spritesPerAtlas;
   }
+
+  const name = `${lowerId}-${higherId}`;
 
   let x = 0;
   let y = 0;
@@ -60,6 +60,9 @@ export default function({ data, spritesData, scale }: Props) {
   y -= (singleSpritePixels * scale * (scale - 1)) / 2;
   // console.log(`x=${x} y=${y}`);
 
+  const prefix = 'data:image/png;base64,';
+  const src = prefix + spritesData[name].toString('base64');
+
   return (
     <div>
       <div
@@ -67,10 +70,10 @@ export default function({ data, spritesData, scale }: Props) {
           width: singleSpriteSize,
           height: singleSpriteSize,
           transform: `translateX(${-x}px) translateY(${-y}px) scale(${scale})`,
-          opacity: 0.8
+          opacity: 1
         }}
       >
-        <img src={fullFileName} alt={`clientId: ${imageId}`} />
+        <img src={src} alt={`clientId: ${objectId}`} />
       </div>
     </div>
   );

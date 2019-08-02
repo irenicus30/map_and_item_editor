@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const PNG = require('pngjs').PNG;
 
-const rootPath = '..'; // this is folder root/app/datamanipulators
+const thisScriptRootPath = '..'; // this is folder root/app/datamanipulators
 const datFileName = 'dat.json';
 const mapFileName = 'map.json';
 const itemsFileName = 'items.json';
@@ -10,14 +10,14 @@ const itemsFileNameXML = 'items.xml';
 const spritesFolderName = 'sprites';
 
 
-function loadObjectsData(pathToData) {
+function loadObjectsData(rootPath, pathToData) {
     const fullPathToDat = path.join( rootPath, pathToData, datFileName);
 
     const rawdata = fs.readFileSync (fullPathToDat);
     const dat = JSON.parse(rawdata);
     return dat;
 }
-function loadSpritesData(pathToData) {
+function loadSpritesData(rootPath, pathToData) {
     const fullPathToSprites = path.join( rootPath, pathToData, spritesFolderName);
     const files = fs.readdirSync (fullPathToSprites);
 
@@ -40,6 +40,11 @@ function loadSpritesData(pathToData) {
 
 let pathToData = 'otb/opentibiasprites';
 
-let s = loadSpritesData(pathToData);
+let s = loadSpritesData(thisScriptRootPath, pathToData);
 
 console.log(s)
+
+var appDir = path.dirname(require.main.filename);
+console.log(appDir)
+
+module.exports = { loadSpritesData };
