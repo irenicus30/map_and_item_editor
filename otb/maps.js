@@ -53,7 +53,7 @@ function loadFromOtb(fileName) {
         // console.log('props end: ', rawNode.propsEnd)
         switch(rawNode.type) {
             case mapsloader.OTBM_MAP_HEADER: {
-                this.type = mapsloader.OTBM_MAP_HEADER;
+                this.type = 'OTBM_MAP_HEADER';
                 this.version = stream.getUint32(i, true);
                 i += 4;
                 this.mapWidth = stream.getUint16(i, true);
@@ -68,13 +68,13 @@ function loadFromOtb(fileName) {
             }
 
             case mapsloader.OTBM_MAP_DATA: {
-                this.type = mapsloader.OTBM_MAP_DATA;
+                this.type = 'OTBM_MAP_DATA';
                 i = this.readAttributes(stream, i);
                 break;
             }
 
             case mapsloader.OTBM_TILE_AREA: {
-                this.type = mapsloader.OTBM_TILE_AREA;
+                this.type = 'OTBM_TILE_AREA';
                 this.x = stream.getUint16(i, true);
                 i += 2;
                 this.y = stream.getUint16(i, true);
@@ -85,7 +85,7 @@ function loadFromOtb(fileName) {
             }
 
             case mapsloader.OTBM_TILE: {
-                this.type = mapsloader.OTBM_TILE;
+                this.type = 'OTBM_TILE';
                 this.x = stream.getUint8(i);
                 i += 1;
                 this.y = stream.getUint8(i);
@@ -95,7 +95,7 @@ function loadFromOtb(fileName) {
             }
 
             case mapsloader.OTBM_ITEM: {
-                this.type = mapsloader.OTBM_ITEM;
+                this.type = 'OTBM_ITEM';
                 this.id = stream.getUint16(i, true);
                 i += 2;
                 i = this.readAttributes(stream, i);
@@ -103,7 +103,7 @@ function loadFromOtb(fileName) {
             }
 
             case mapsloader.OTBM_HOUSETILE: {
-                this.type = mapsloader.OTBM_HOUSETILE;
+                this.type = 'OTBM_HOUSETILE';
                 this.x = stream.getUint8(i);
                 i += 1;
                 this.y = stream.getUint8(i);
@@ -115,12 +115,12 @@ function loadFromOtb(fileName) {
             }
 
             case mapsloader.OTBM_WAYPOINTS: {
-                this.type = mapsloader.OTBM_WAYPOINTS;
+                this.type = 'OTBM_WAYPOINTS';
                 break;
             }
 
             case mapsloader.OTBM_WAYPOINT: {
-                this.type = mapsloader.OTBM_WAYPOINT;
+                this.type = 'OTBM_WAYPOINT';
 
                 let nameLength = stream.getUint16(i, true);
                 i += 2;                
@@ -142,12 +142,12 @@ function loadFromOtb(fileName) {
             }
 
             case mapsloader.OTBM_TOWNS: {
-                this.type = mapsloader.OTBM_TOWNS;
+                this.type = 'OTBM_TOWNS';
                 break;
             }
 
             case mapsloader.OTBM_TOWN: {
-                this.type = mapsloader.OTBM_TOWN;
+                this.type = 'OTBM_TOWN';
                 this.townId = stream.getUint32(i, true);
                 i += 4;
 
@@ -343,36 +343,36 @@ function loadFromOtb(fileName) {
 
     Node.prototype.setChildren = function (children) {
         switch (this.type) {
-            case mapsloader.OTBM_TILE_AREA: {
+            case 'OTBM_TILE_AREA': {
                 let prev = null;
                 this.tiles = children
                     .map( child => new Node(child) );
                     break;
             }
 
-            case mapsloader.OTBM_TILE:
-            case mapsloader.OTBM_HOUSETILE: {
+            case 'OTBM_TILE':
+            case 'OTBM_HOUSETILE': {
                 let prev = null;
                 this.items = children
                 .map( child => new Node(child) );
                     break;
             }
 
-            case mapsloader.OTBM_TOWNS: {
+            case 'OTBM_TOWNS': {
                 let prev = null;
                 this.towns = children
                 .map( child => new Node(child) );
                     break;
             }
 
-            case mapsloader.OTBM_ITEM: {
+            case 'OTBM_ITEM': {
                 let prev = null;
                 this.content = children
                 .map( child => new Node(child) );
                     break;
             }
 
-            case mapsloader.OTBM_MAP_DATA: {
+            case 'OTBM_MAP_DATA': {
                 let prev = null;
                 this.features = children
                 .map( child => new Node(child) );
