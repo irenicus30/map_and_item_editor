@@ -56,7 +56,7 @@ export default function({ id, spritesData, scale }: Props) {
   y *= scale;
   x -= (singleSpritePixels * scale * (scale - 1)) / 2;
   y -= (singleSpritePixels * scale * (scale - 1)) / 2;
-  console.log(`x=${x} y=${y}`);
+  // console.log(`x=${x} y=${y}`);
 
   const prefix = 'data:image/png;base64,';
   const src = prefix + spritesData[name].toString('base64');

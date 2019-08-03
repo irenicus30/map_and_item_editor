@@ -3,5 +3,5 @@
   "COUNTER": "/counter",
   "OBJECTS": "/objects",
   "ITEMS": "/items",
-  "MAP": "/map"
+  "MAPS": "/maps"
 }

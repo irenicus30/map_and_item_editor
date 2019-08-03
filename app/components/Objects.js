@@ -12,6 +12,7 @@ import Grid from '@material-ui/core/Grid';
 
 import SingleObject from '../primitives/SingleObject';
 import SingleObjectInfo from '../primitives/SingleObjectInfo';
+import SingleObjectInfoAdd from '../primitives/SingleObjectInfoAdd';
 
 import SingleSprite from '../primitives/SingleSprite';
 import SingleSpriteInfo from '../primitives/SingleSpriteInfo';
@@ -162,18 +163,12 @@ export default function(props: Props) {
                 scale={scale2}
               />
             </div>
-            <Typography variand="h5" component="h2">
-              {`cliendId ${objectsData.items[objectSelectedId].objectId}`}
-            </Typography>
-            <Typography variand="h5" component="h2">
-              {`spriteId ${
-                objectsData.items[objectSelectedId].sprites[
-                  objectSelectedSpriteIndex % objectsData.items[objectSelectedId].sprites.length
-                ]}`}
-            </Typography>
-            <Typography variand="h5" component="h2">
-              {`serverId ${undefined}`}
-            </Typography>
+            <div>
+              <SingleObjectInfoAdd
+                data={objectsData.items[objectSelectedId]}
+                spriteIndex={objectSelectedSpriteIndex}
+              />
+            </div>
           </Card>
         </Grid>
         <Grid item xs={8} sm={4} className={classes.column}>

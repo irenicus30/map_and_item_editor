@@ -1,176 +1,109 @@
 // @flow
-import fs from 'fs';
-import path from 'path';
 import React from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
 
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 
+import MapCanvas from '../primitives/MapCanvas';
 import SingleObject from '../primitives/SingleObject';
-import SingleObjectInfo from '../primitives/SingleObjectInfo';
 
 const useStyles = makeStyles({
   root: {
     flexGrow: 1
   },
-  card: {
-    maxWidth: 400
+  column: {
+    overflow: 'scroll'
   }
 });
 
+const pathToForgottenserverData = 'otb/forgottenserver';
+const pathToOpentibiaspritesData = 'otb/opentibiasprites';
+
+const windowSquaresInX = 15;
+const windowSquaresInY = 11;
+const objectsInX = 8;
+const objectsInY = 8;
+
 const scale = 2;
-const scale2 = 5;
-const singleObjectPixels = 32;
-const singleObjectSize = singleObjectPixels * scale;
-const singleObjectSize2 = singleObjectPixels * scale2;
+const scale2 = 1.5;
+const singleSpritePixels = 32;
+const singleSTileSize = singleSpritePixels * scale;
+const singleObjectSize = singleSpritePixels * scale2;
 
-const windowFieldsY = 11;
-const windowFieldsX = 15;
-
-const pathToForgottenserverSprites = 'otb/forgottenserver/sprites';
-const pathToOpentibiaspritesSprites = 'otb/opentibiasprites/sprites';
 
 type Props = {
-  changeTextField: (event: object) => void,
-  changeStartId: (value: string) => void,
   changeTileset: (value: string) => void,
-  imageSelect: (key: any) => void,
-  mapUpdate: (toUpdate: object) => void,
-  mapDelete: (toDelete: object) => void,
+  changePosition: (position: object) => void,
   maps: object
 };
 
 export default function(props: Props) {
   const classes = useStyles();
 
-  const { changeTextField, changeStartId, changeTileset, imageSelect, mapUpdate, mapDelete, maps } = props;
-  const { startIdProps, textFieldValue, pathToSprites, selectedId, mapData } = maps;
-
-  const fullFileName = path.join(__dirname, '..', pathToSprites, 'dat.json');
-  const contents = fs.readFileSync(fullFileName);
-  const dat = JSON.parse(contents);
-
-  let startId = startIdProps - 101;
-  if (!startId) startId = 0;
-  if (startId < 0) startId = 0;
-  const endId = startId + windowFieldsX * windowFieldsY;
-
-  const imagesOnScreen = windowFieldsX * windowFieldsY;
+  const {
+    changeTileset,
+    changePosition,
+    maps
+  } = props;
+  const {
+    position,
+    objectsData,
+    spritesData,
+    mapData,
+  } = maps;
+ 
+  let itemStartId = 0;
+  const itemEndId = itemStartId + objectsInX * objectsInY;
 
   return (
     <div className={classes.root}>
-      <Grid container spacing={3}>
-        <Card className={classes.card}>
-          <CardContent>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => changeTileset(pathToForgottenserverSprites)}
-            >
-              tileset forgottenserver
-            </Button>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => changeTileset(pathToOpentibiaspritesSprites)}
-            >
-              tileset opentibiasprites
-            </Button>
-            <TextField
-              id="itemId"
-              type="number"
-              label="starting item id"
-              placeholder="101"
-              onChange={changeTextField}
-            />
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => changeStartId(textFieldValue)}
-            >
-              Set Start Id
-            </Button>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => changeStartId(startIdProps-imagesOnScreen)}
-            >
-              Prev {imagesOnScreen} images
-            </Button>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => changeStartId(startIdProps+imagesOnScreen)}
-            >
-              Next {imagesOnScreen} images
-            </Button>
-            <Typography variand="h5" component="h2">
-              {`items ${startId} to ${endId - 1}`}
-            </Typography>
-            <input type="file" id="file" red="fileUploader" />
-            <div
-              style={{
-                width: singleObjectSize2,
-                height: singleObjectSize2,
-                overflow: 'hidden'
-              }}
-            >
-              <SingleObjectInfo
-                id={selectedId}
-                data={dat.items[selectedId]}
-                pathToSprites={pathToSprites}
-                scale={scale2}
-              />
-            </div>
-            <Typography variand="h5" component="h2">
-              {`cliendId ${selectedId}`}
-            </Typography>
-            <Typography variand="h5" component="h2">
-              {`spriteId ${dat.items[selectedId]==undefined?'none':dat.items[selectedId].sprites[0]}`}
-            </Typography>
-            <Typography variand="h5" component="h2">
-              {`serverId ${undefined}`}
-            </Typography>
-          </CardContent>
-        </Card>
-        <div
-          style={{
-            width: singleObjectSize * windowFieldsX,
-            height: singleObjectSize * windowFieldsY,
-            display: 'grid',
-            gridTemplateColumns: `repeat(${windowFieldsX}, ${singleObjectSize}px`,
-            gridGap: '2px'
-          }}
-        >
-          {Object.keys(dat.items)
-            .slice(startId, endId)
-            .map((key, index) => {
-              return (
-                <div
-                  key={index}
-                  style={{
-                    width: singleObjectSize,
-                    height: singleObjectSize,
-                    overflow: 'hidden'
-                  }}
-                  onClick={() => imageSelect(key)}
-                >
-                  <SingleObject
-                    mykey={key}
-                    data={dat.items[key]}
-                    pathToSprites={pathToSprites}
-                    scale={scale}
-                  />
-                </div>
-              );
-            })}
-        </div>
+      <Grid container spacing={3} direction="row-reverse">
+        <Grid item xs={12} sm={8} className={classes.column}>
+          <MapCanvas
+            scale={scale}
+            position={position}
+            objectsData={objectsData}
+            spritesData={spritesData}
+            mapData={mapData}
+            windowSquaresInX={windowSquaresInX}
+            windowSquaresInY={windowSquaresInY}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={4} className={classes.column}>
+          <div
+            style={{
+              width: singleObjectSize * objectsInX,
+              height: singleObjectSize * objectsInY,
+              display: 'grid',
+              gridTemplateColumns: `repeat(${objectsInX}, ${singleObjectSize}px`
+            }}
+          >
+            {Object.keys(objectsData.items)
+              .slice(itemStartId, itemEndId)
+              .map(objectId => {
+                const data = objectsData.items[objectId];
+                return (
+                  <div
+                    key={objectId}
+                    style={{
+                      width: singleObjectSize,
+                      height: singleObjectSize,
+                      overflow: 'hidden'
+                    }}
+                    onClick={() => {NaN;}}
+                  >
+                    <SingleObject
+                      data={data}
+                      spritesData={spritesData}
+                      scale={scale2}
+                    />
+                  </div>
+                );
+              })}
+          </div>
+        </Grid>
       </Grid>
     </div>
   );

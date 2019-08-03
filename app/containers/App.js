@@ -79,19 +79,19 @@ export default function App(props: Props) {
 
             <Button color="inherit">
               <Link
-                to={routes.ITEMS}
+                to={routes.MAPS}
                 style={{ textDecoration: 'none', color: 'white' }}
               >
-                to Items
+                to Maps
               </Link>
             </Button>
 
             <Button color="inherit">
               <Link
-                to={routes.MAP}
+                to={routes.ITEMS}
                 style={{ textDecoration: 'none', color: 'white' }}
               >
-                to Map
+                to Items
               </Link>
             </Button>
           </Toolbar>

@@ -1,33 +1,38 @@
 // @flow
-import {
-  CHANGE_TEXT_FIELD,
-  CHANGE_ID, CHANGE_TILESET, SELECT_IMAGE, MAP_UPDATE, MAP_DELETE } from '../actions/maps';
+import { CHANGE_TILESET, MAP_CHANGE_POSITION } from '../actions/maps';
 import type { Action } from './types';
+import { loadObjectsData, loadSpritesData, loadMapData } from '../datamanipulators/loaders';
 
-const defaultMapData = require('../../otb/opentibiasprites/sprites/map.json');
+const defaultPathToData = 'otb/opentibiasprites';
+const rootPath = '.'; // this is folder root/app/reducers
+let defaultObjectsData = loadObjectsData(rootPath, defaultPathToData);
+let defaultSpritesData = loadSpritesData(rootPath, defaultPathToData);
+let defaultMapData = loadMapData(rootPath, defaultPathToData);
+const defaultPosition = { x: 1, y: 1, z: 7};
 
-const defaultStartIdProps = 101;
-const defaultPathToSprites = 'otb/opentibiasprites/sprites';
-const defaultSelectedId = 101;
 
 export default function objects(
   state: object = {
-    startIdProps: defaultStartIdProps,
-    pathToSprites: defaultPathToSprites,
-    selectedId: defaultSelectedId,
+    position: defaultPosition,
+    objectsData: defaultObjectsData,
+    spritesData: defaultSpritesData,
     mapData: defaultMapData
   },
   action: Action
 ) {
   switch (action.type) {
-    case CHANGE_TEXT_FIELD:
-      return { ...state, textFieldValue: action.textFieldValue };
-    case CHANGE_ID:
-      return { ...state, startIdProps: action.startIdProps };
-    case CHANGE_TILESET:
-      return { ...state, pathToSprites: action.pathToSprites };
-    case SELECT_IMAGE:
-      return { ...state, selectedId: action.selectedId };
+    case CHANGE_TILESET: {
+      defaultObjectsData = action.objectsData;
+      defaultSpritesData = action.spritesData;
+      return {
+        ...state,
+        objectsData: action.objectsData,
+        spritesData: action.spritesData
+      };
+    }
+
+    case MAP_CHANGE_POSITION:
+      return { ...state, position: action.position };
     default:
       return state;
   }

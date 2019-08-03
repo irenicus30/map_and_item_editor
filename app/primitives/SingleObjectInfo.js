@@ -1,6 +1,5 @@
 // @flow
 import React from 'react';
-import Typography from '@material-ui/core/Typography';
 
 const spritesPerAtlas = 256;
 const spritesPerAtlasX = 16;
@@ -81,15 +80,6 @@ export default function({ data, spriteIndex, spritesData, scale }: Props) {
       >
         <img src={src} alt={`clientId: ${objectId}`} />
       </div>
-      <Typography variand="h5" component="h2">
-        {`cliendId ${objectId}`}
-      </Typography>
-      <Typography variand="h5" component="h2">
-        {`spriteId ${imageId}`}
-      </Typography>
-      <Typography variand="h5" component="h2">
-        {`serverId ${undefined}`}
-      </Typography>
     </div>
   );
 }

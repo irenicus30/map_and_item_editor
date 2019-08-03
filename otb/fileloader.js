@@ -59,11 +59,6 @@ function readOtb(fileName) {
       propsPosition += 1;
       i += 1;
     }
-    currentNode.extractProps = [];
-    currentNode.extractProps[0] = data.readUInt8(currentNode.propsEnd);
-    currentNode.extractProps[1] = data.readUInt8(currentNode.propsEnd+1);
-    currentNode.extractProps[2] = data.readUInt8(currentNode.propsEnd+2);
-    currentNode.extractProps[3] = data.readUInt8(currentNode.propsEnd+3);
   }
   function parseTree(data) {
     let i = 4; // magic 4 bytes are already checked here
