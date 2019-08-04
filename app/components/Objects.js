@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import React, { useRef }  from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -66,8 +66,13 @@ export default function(props: Props) {
     changeSpriteTextField,
     changeSpriteStartId,
     selectSprite,
+    shared,
     objects
   } = props;
+  const {
+    objectsData,
+    spritesData
+  } = shared;
   const {
     objectTextField,
     objectStartId,
@@ -75,9 +80,7 @@ export default function(props: Props) {
     objectSelectedSpriteIndex,
     spriteTextField,
     spriteStartId,
-    spriteSelectedId,
-    objectsData,
-    spritesData
+    spriteSelectedId
   } = objects;
 
   let itemStartId = objectStartId - 100;
@@ -93,26 +96,29 @@ export default function(props: Props) {
 
   const spritesOnScreen = spritesInX * spritesInY;
 
+  const filesRef = useRef(null);
+
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
         <Grid item xs={4} sm={2} className={classes.column}>
           <Card className={classes.card}>
-            <CardContent>
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={() => changeTileset(pathToForgottenserverData)}
-              >
-                tileset forgottenserver
-              </Button>
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={() => changeTileset(pathToOpentibiaspritesData)}
-              >
-                tileset opentibiasprites
-              </Button>
+            <CardContent>              
+              <Typography variand="h5" component="h2">
+                {"Select folder with dat.json items.json map.json and sprites"}
+              </Typography>
+              <Typography variand="h5" component="h2">
+                <input
+                  type="file"
+                  webkitdirectory="true"
+                  multiple
+                  ref={filesRef}
+                  onChange={event => {
+                    const newPathToData = filesRef.current.files[0].path;
+                    changeTileset(newPathToData);
+                  }}
+                />
+              </Typography>
               <TextField
                 id="objectId"
                 type="number"
@@ -246,20 +252,6 @@ export default function(props: Props) {
         <Grid item xs={4} sm={2} className={classes.column}>
           <Card className={classes.card}>
             <CardContent>
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={() => changeTileset(pathToForgottenserverData)}
-              >
-                tileset forgottenserver
-              </Button>
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={() => changeTileset(pathToOpentibiaspritesData)}
-              >
-                tileset opentibiasprites
-              </Button>
               <TextField
                 id="spriteId"
                 type="number"

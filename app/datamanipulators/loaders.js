@@ -40,3 +40,22 @@ export function loadMapData(rootPath, pathToMap) {
     const otbm = JSON.parse(rawdata);
     return otbm;
 }
+
+export function loadItemsData(rootPath, pathToItems) {
+    const fullPathToOtbm = path.join( rootPath, pathToItems, itemsFileName);
+
+    const rawdata = fs.readFileSync (fullPathToOtbm);
+    const otb = JSON.parse(rawdata);
+    return otb;
+}
+
+export function getItemsIdMap(itemsData) {
+    const itemsIdMap = {};
+    for(let item of itemsData) {
+        console.log(item)
+        if (item) {
+            itemsIdMap[item.id] = item.clientId;
+        }
+    }
+    return itemsIdMap;
+}

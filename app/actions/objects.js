@@ -1,29 +1,12 @@
 // @flow
 import type { GetState, Dispatch } from '../reducers/types';
-import {
-  loadObjectsData,
-  loadSpritesData
-} from '../datamanipulators/loaders';
 
-export const CHANGE_TILESET = 'CHANGE_TILESET';
 export const CHANGE_OBJECT_TEXT_FIELD = 'CHANGE_OBJECT_TEXT_FIELD';
 export const CHANGE_OBJECT_START_ID = 'CHANGE_OBJECT_START_ID';
 export const SELECT_OBJECT = 'SELECT_OBJECT';
 export const CHANGE_SPRITE_TEXT_FIELD = 'CHANGE_SPRITE_TEXT_FIELD';
 export const CHANGE_SPRITE_START_ID = 'CHANGE_SPRITE_START_ID';
 export const SELECT_SPRITE = 'SELECT_SPRITE';
-
-const rootPath = '.'; // this is folder root/app/actions
-
-export function changeTileset(pathToSprites: string) {  
-  const objectsData = loadObjectsData(rootPath, pathToSprites);
-  const spritesData = loadSpritesData(rootPath, pathToSprites);
-  return {
-    type: CHANGE_TILESET,
-    objectsData,
-    spritesData
-  };
-}
 
 export function changeObjectTextField(event: object) {
   let value = '100';

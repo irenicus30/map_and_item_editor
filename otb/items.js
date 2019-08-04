@@ -15,9 +15,9 @@ function loadFromOtb(fileName) {
     const majorVersion = rootDataView.getUint32(7, true); // items otb format file version
     const minorVersion = rootDataView.getUint32(11, true); // client version
     const buildNumber = rootDataView.getUint32(15, true); // revision
-    console.log('majorVersion: ', majorVersion);
-    console.log('minorVersion: ', minorVersion);
-    console.log('buildNumber: ', buildNumber);
+    // console.log('majorVersion: ', majorVersion);
+    // console.log('minorVersion: ', minorVersion);
+    // console.log('buildNumber: ', buildNumber);
   } else {
     throw new Error('No version info items otb file');
   }

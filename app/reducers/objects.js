@@ -1,6 +1,5 @@
 // @flow
 import {
-  CHANGE_TILESET,
   CHANGE_OBJECT_TEXT_FIELD,
   CHANGE_OBJECT_START_ID,
   SELECT_OBJECT,
@@ -9,7 +8,6 @@ import {
   SELECT_SPRITE
 } from '../actions/objects';
 import type { Action } from './types';
-import { loadObjectsData, loadSpritesData } from '../datamanipulators/loaders';
 
 const defaultPathToData = 'otb/opentibiasprites';
 const defaultObjectStartId = 100;
@@ -18,33 +16,17 @@ const defaultSpriteStartId = 1;
 const defaultSelectedSprite = 1;
 const defaultObjectSelectedSpriteIndex = 0;
 
-const rootPath = '.'; // this is folder root/app/reducers
-let defaultObjectsData = loadObjectsData(rootPath, defaultPathToData);
-let defaultSpritesData = loadSpritesData(rootPath, defaultPathToData);
-
 export default function objects(
   state = {
     objectStartId: defaultObjectStartId,
     objectSelectedId: defaultSelectedObject,
     objectSelectedSpriteIndex: defaultObjectSelectedSpriteIndex,
     spriteStartId: defaultSpriteStartId,
-    spriteSelectedId: defaultSelectedSprite,
-    objectsData: defaultObjectsData,
-    spritesData: defaultSpritesData
+    spriteSelectedId: defaultSelectedSprite
   },
   action: Action
 ) {
   switch (action.type) {
-    case CHANGE_TILESET: {
-      defaultObjectsData = action.objectsData;
-      defaultSpritesData = action.spritesData;
-      return {
-        ...state,
-        objectsData: action.objectsData,
-        spritesData: action.spritesData
-      };
-    }
-
     case CHANGE_OBJECT_TEXT_FIELD:
       return { ...state, objectTextField: action.objectTextField };
 

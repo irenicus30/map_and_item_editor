@@ -1,20 +1,19 @@
 // @flow
 import React, { useEffect, useRef }  from 'react';
 
-const spritesPerAtlas = 256;
-const spritesPerAtlasX = 16;
-// const spritesPerAtlasY = 16;
 const singleSpritePixels = 32;
 
 type Props = {
-    scale: number,
-    position: object,
-    objectsData: object,
-    spritesData: object,
-    mapData: object,
-    width: number,
-    height: number,
-    setPosition: (position: object) => void
+  scale: number,
+  position: object,
+  objectsData: object,
+  spritesData: object,
+  mapData: object,
+  itemsData: object,
+  itemsIdMap: object,
+  width: number,
+  height: number,
+  setPosition: (position: object) => void
 };
 
 function* generateTilesForGivenRange(range, mapData) {
@@ -57,13 +56,14 @@ function* generateTilesForGivenRange(range, mapData) {
     }
 }
 
-export default function({ scale, position, objectsData, spritesData, mapData, width, height, windowSquaresInX, windowSquaresInY, setPosition }: Props) {
+export default function({ scale, position, objectsData, spritesData, mapData, itemsData, itemsIdMap, width, height, windowSquaresInX, windowSquaresInY, setPosition }: Props) {
   const singleSpriteSize = singleSpritePixels * scale;
 
   const canvasRef = useRef(null);
 
   useEffect(() => {
     const ctx = canvasRef.current.getContext('2d');
+    ctx.fillStyle = '#000000';
     ctx.fillRect(0,0, width, height);
 
     const drawMinimapTile = (tilePosition, minimapColor) => {
@@ -92,7 +92,12 @@ export default function({ scale, position, objectsData, spritesData, mapData, wi
     }, mapData);
     for (let posAndId of generator) {
         const { id } = posAndId;
-        const minimapColor = objectsData.items[id].minimapColor;
+        const clientId = itemsIdMap[id];
+        const tileData = objectsData.items[clientId];
+        if(tileData===null || tileData===undefined) {
+          continue;
+        }
+        const minimapColor = tileData.minimapColor;
         drawMinimapTile(posAndId, minimapColor);
     }
     let mapVisibleX = -singleSpriteSize * Math.floor(windowSquaresInX/2) + Math.floor(width/2);
@@ -101,11 +106,11 @@ export default function({ scale, position, objectsData, spritesData, mapData, wi
     let mapVisibleHeight = singleSpriteSize * windowSquaresInY;
     ctx.beginPath()
     ctx.rect(mapVisibleX, mapVisibleY, mapVisibleWidth, mapVisibleHeight);
-    ctx.strokeStyle = "white";    
+    ctx.strokeStyle = "white";
     ctx.stroke();
     ctx.beginPath()
     ctx.rect(mapVisibleX-1, mapVisibleY-1, mapVisibleWidth+2, mapVisibleHeight+2);
-    ctx.strokeStyle = "black";    
+    ctx.strokeStyle = "black";
     ctx.stroke();
   });
 

@@ -7,4 +7,4 @@ const f = './forgottenserver/items.otb';
 
 const itemDictionary = items.loadFromOtb(f);
 
-// console.log(itemDictionary[681]);
+console.log(JSON.stringify(itemDictionary, null, 4));

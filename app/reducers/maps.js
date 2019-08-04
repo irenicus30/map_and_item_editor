@@ -1,43 +1,24 @@
 // @flow
 import {
-  CHANGE_TILESET,
   MAP_SET_POSITION,
   MAP_MOVE_POSITION,
-  MAP_CHANGE_MINIMAP_SCALE
+  MAP_CHANGE_MINIMAP_SCALE,
+  MAP_SELECT_TILE
 } from '../actions/maps';
 import type { Action } from './types';
-import { loadObjectsData, loadSpritesData, loadMapData } from '../datamanipulators/loaders';
 
 const rootPath = '.'; // this is folder root/app/reducers
-const defaultPosition = { x: 1000, y: 1000, z: 7};
-const defaultMinimapScale = 0.1;
-
-const defaultPathToData = 'otb/opentibiasprites';
-let defaultObjectsData = loadObjectsData(rootPath, defaultPathToData);
-let defaultSpritesData = loadSpritesData(rootPath, defaultPathToData);
-let defaultMapData = loadMapData(rootPath, defaultPathToData);
+const defaultPosition = { x: 1000, y: 1000, z: 7 };
+const defaultMinimapScale = 0.125;
 
 export default function objects(
   state: object = {
     position: defaultPosition,
-    objectsData: defaultObjectsData,
-    spritesData: defaultSpritesData,
-    mapData: defaultMapData,
     minimapScale: defaultMinimapScale
   },
   action: Action
 ) {
   switch (action.type) {
-    case CHANGE_TILESET: {
-      defaultObjectsData = action.objectsData;
-      defaultSpritesData = action.spritesData;
-      return {
-        ...state,
-        objectsData: action.objectsData,
-        spritesData: action.spritesData
-      };
-    }
-
     case MAP_SET_POSITION:
       return { ...state, position: action.position };
 
@@ -57,6 +38,9 @@ export default function objects(
 
     case MAP_CHANGE_MINIMAP_SCALE:
       return { ...state, minimapScale: action.minimapScale };
+
+    case MAP_SELECT_TILE:
+      return { ...state, selectedTileId: action.selectedTileId };
 
     default:
       return state;
