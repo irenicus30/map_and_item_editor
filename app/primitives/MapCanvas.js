@@ -16,7 +16,7 @@ type Props = {
     windowSquaresInY: number
 };
 
-function makeToDrawPositios(tilePosition, width, height) {
+function makeToDrawPositions(tilePosition, width, height) {
     const toDrawPositions = [tilePosition];
     if(width == 2) {
         if(height==2) {
@@ -51,43 +51,50 @@ function makeToDrawPositios(tilePosition, width, height) {
     return toDrawPositions;
 }
 
+function* generateTilesForGivenRange(range, mapData) {
+    function isInRange(posAndId) {
+        return (
+            range.xmin <= posAndId.x &&
+            posAndId.x <= range.xmax &&
+            range.ymin <= posAndId.y &&
+            posAndId.y <= range.ymax &&
+            range.z == posAndId.z
+        );
+    }
+
+    const nodes = mapData.data.nodes;
+    for (let node of nodes) {
+        if (node.type != 'OTBM_MAP_DATA') {
+            continue;
+        }
+        const features = node.features;
+        for (let feature of features) {
+            if (feature.type != 'OTBM_TILE_AREA') {
+                continue;
+            }
+            const tiles = feature.tiles;
+            for (let tile of tiles) {
+                if (tile.type != 'OTBM_TILE' && tile.type != 'OTBM_HOUSETILE') {
+                    continue;
+                }
+                const posAndId = {
+                    x: feature.x + tile.x,
+                    y: feature.y + tile.y,
+                    z: feature.z,
+                    id: tile.tileid
+                }
+                if (isInRange(posAndId)) {
+                    yield posAndId;
+                }
+            }
+        }
+    }
+}
+
 export default function({ scale, position, objectsData, spritesData, mapData, windowSquaresInX, windowSquaresInY }: Props) {
   const singleSpriteSize = singleSpritePixels * scale;
   const width = singleSpriteSize * windowSquaresInX;
   const height = singleSpriteSize * windowSquaresInY;
-
-//   const { objectId, sprites } = data;
-//   const [imageId] = sprites;
-
-//   let lowerId = 1;
-//   let higherId = spritesPerAtlas;
-//   while (imageId > higherId) {
-//     lowerId += spritesPerAtlas;
-//     higherId += spritesPerAtlas;
-//   }
-
-//   const name = `${lowerId}-${higherId}`;
-
-//   let x = 0;
-//   let y = 0;
-//   let offset = imageId - lowerId;
-//   while (offset > 0) {
-//     offset -= 1;
-//     x += singleSpritePixels;
-//     if (x >= singleSpritePixels * spritesPerAtlasX) {
-//       x = 0;
-//       y += singleSpritePixels;
-//     }
-//   }
-
-//   x *= scale;
-//   y *= scale;
-//   x -= (singleSpritePixels * scale * (scale - 1)) / 2;
-//   y -= (singleSpritePixels * scale * (scale - 1)) / 2;
-//   // console.log(`x=${x} y=${y}`);
-
-//   const prefix = 'data:image/png;base64,';
-//   const src = prefix + spritesData[name].toString('base64');
 
   const canvasRef = useRef(null);
 
@@ -104,7 +111,7 @@ export default function({ scale, position, objectsData, spritesData, mapData, wi
         toDrawPositions.forEach( (thisTilePosition, index) => {
             const imageId = sprites[index];
             const sWidth = singleSpritePixels, sHeight = singleSpritePixels;
-            const dWidth = singleSpriteSize, height = singleSpriteSize;
+            const dWidth = singleSpriteSize, dHeight = singleSpriteSize;
 
             let lowerId = 1;
             let higherId = spritesPerAtlas;
@@ -121,13 +128,29 @@ export default function({ scale, position, objectsData, spritesData, mapData, wi
             const sx = singleSpritePixels * Math.floor(offset % spritesPerAtlasX);
             const sy = singleSpritePixels * Math.floor(offset / spritesPerAtlasX);
 
-            const dx = singleSpriteSize * (thisTilePosition.x - position.x);
-            const dy = singleSpriteSize * (thisTilePosition.y - position.y)
+            const dx = singleSpriteSize * (thisTilePosition.x - position.x + Math.floor(windowSquaresInX/2));
+            const dy = singleSpriteSize * (thisTilePosition.y - position.y + Math.floor(windowSquaresInY/2));
 
-            ctx.drawImage(src, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+            const img = new Image();
+            img.onload = function () {
+                ctx.drawImage(img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+            }
+            img.src = src;
+            
         });
     }
-    mapData
+    let generator = generateTilesForGivenRange({
+        xmin: position.x - Math.floor(windowSquaresInX/2),
+        xmax: position.x + Math.floor(windowSquaresInX/2),
+        ymin: position.y - Math.floor(windowSquaresInY/2),
+        ymax: position.y + Math.floor(windowSquaresInY/2),
+        z: position.z
+    }, mapData);
+    for (let posAndId of generator) {
+        const { id } = posAndId;
+        const tileData = objectsData.items[id];
+        drawTile(posAndId, tileData);
+    }
   });
 
   return (

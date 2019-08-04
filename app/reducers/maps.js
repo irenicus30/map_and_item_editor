@@ -1,22 +1,29 @@
 // @flow
-import { CHANGE_TILESET, MAP_CHANGE_POSITION } from '../actions/maps';
+import {
+  CHANGE_TILESET,
+  MAP_SET_POSITION,
+  MAP_MOVE_POSITION,
+  MAP_CHANGE_MINIMAP_SCALE
+} from '../actions/maps';
 import type { Action } from './types';
 import { loadObjectsData, loadSpritesData, loadMapData } from '../datamanipulators/loaders';
 
-const defaultPathToData = 'otb/opentibiasprites';
 const rootPath = '.'; // this is folder root/app/reducers
+const defaultPosition = { x: 1000, y: 1000, z: 7};
+const defaultMinimapScale = 0.1;
+
+const defaultPathToData = 'otb/opentibiasprites';
 let defaultObjectsData = loadObjectsData(rootPath, defaultPathToData);
 let defaultSpritesData = loadSpritesData(rootPath, defaultPathToData);
 let defaultMapData = loadMapData(rootPath, defaultPathToData);
-const defaultPosition = { x: 1, y: 1, z: 7};
-
 
 export default function objects(
   state: object = {
     position: defaultPosition,
     objectsData: defaultObjectsData,
     spritesData: defaultSpritesData,
-    mapData: defaultMapData
+    mapData: defaultMapData,
+    minimapScale: defaultMinimapScale
   },
   action: Action
 ) {
@@ -31,8 +38,26 @@ export default function objects(
       };
     }
 
-    case MAP_CHANGE_POSITION:
+    case MAP_SET_POSITION:
       return { ...state, position: action.position };
+
+    case MAP_MOVE_POSITION:
+      let position = state.position;
+      let delta = action.delta;
+      if (delta.x) {
+        position.x += delta.x;
+      }
+      if (delta.y) {
+        position.y += delta.y;
+      }
+      if (delta.z) {
+        position.z += delta.z;
+      }
+      return { ...state, position: position };
+
+    case MAP_CHANGE_MINIMAP_SCALE:
+      return { ...state, minimapScale: action.minimapScale };
+
     default:
       return state;
   }

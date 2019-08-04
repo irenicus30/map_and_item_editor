@@ -344,7 +344,6 @@ function loadFromOtb(fileName) {
     Node.prototype.setChildren = function (children) {
         switch (this.type) {
             case 'OTBM_TILE_AREA': {
-                let prev = null;
                 this.tiles = children
                     .map( child => new Node(child) );
                     break;
@@ -352,35 +351,30 @@ function loadFromOtb(fileName) {
 
             case 'OTBM_TILE':
             case 'OTBM_HOUSETILE': {
-                let prev = null;
                 this.items = children
                 .map( child => new Node(child) );
                     break;
             }
 
             case 'OTBM_TOWNS': {
-                let prev = null;
                 this.towns = children
                 .map( child => new Node(child) );
                     break;
             }
 
             case 'OTBM_ITEM': {
-                let prev = null;
                 this.content = children
                 .map( child => new Node(child) );
                     break;
             }
 
             case 'OTBM_MAP_DATA': {
-                let prev = null;
                 this.features = children
                 .map( child => new Node(child) );
                     break;
             }
 
             default: {
-                let prev = null;
                 this.nodes = children
                 .map( child => new Node(child) );
                     break;

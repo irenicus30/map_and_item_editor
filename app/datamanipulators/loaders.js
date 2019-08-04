@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 const datFileName = 'dat.json';
-const mapFileName = 'maps.json';
+const mapFileName = 'map.json';
 const itemsFileName = 'items.json';
 const itemsFileNameXML = 'items.xml';
 const spritesFolderName = 'sprites';
@@ -34,7 +34,7 @@ export function loadSpritesData(rootPath, pathToData) {
 }
 
 export function loadMapData(rootPath, pathToMap) {
-    const fullPathToOtbm = path.join( rootPath, pathToMap, datFileName);
+    const fullPathToOtbm = path.join( rootPath, pathToMap, mapFileName);
 
     const rawdata = fs.readFileSync (fullPathToOtbm);
     const otbm = JSON.parse(rawdata);

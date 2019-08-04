@@ -10,21 +10,20 @@ const f = './opentibiasprites/otsp.otbm';
 
 const mapsDictionary = maps.loadFromOtb(f);
 
-// console.log(JSON.stringify(mapsDictionary, null, 4));
+console.log(JSON.stringify(mapsDictionary, null, 4));
 
 
-const of = '/opentibiasprites/maps.json';
 // const of = '/forgottenserver/maps.json';
 
-var transformStream = JSONStream.stringify();
-var outputStream = fs.createWriteStream( __dirname + of );
-transformStream.pipe( outputStream );    
-transformStream.write( mapsDictionary );
-transformStream.end();
+// var transformStream = JSONStream.stringify();
+// var outputStream = fs.createWriteStream( __dirname + of );
+// transformStream.pipe( outputStream );    
+// transformStream.write( mapsDictionary );
+// transformStream.end();
 
-outputStream.on(
-    "finish",
-    function handleFinish() {
-        console.log("Done");
-    }
-);
+// outputStream.on(
+//     "finish",
+//     function handleFinish() {
+//         console.log("Done");
+//     }
+// );
