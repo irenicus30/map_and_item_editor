@@ -8,7 +8,7 @@ if (process.argv.length<4) {
 }
 console.log('reading file ', process.argv[2]);
 
-const mapsDictionary = maps.loadFromOtb(process.argv[2]);
+const mapsDictionary = maps.loadFromOtbm(process.argv[2]);
 
 console.log('writing file ', process.argv[3]);
 

@@ -1,5 +1,4 @@
 const fs = require('fs');
-const fileloader = require('./fileloader');
 const maps = require('./maps');
 
 if (process.argv.length<4) {
@@ -8,7 +7,7 @@ if (process.argv.length<4) {
 }
 console.log('reading file ', process.argv[2]);
 
-const mapsDictionary = maps.loadFromOtb(process.argv[2]);
+const mapsDictionary = maps.loadFromOtbm(process.argv[2]);
 
 console.log('writing file ', process.argv[3]);
 

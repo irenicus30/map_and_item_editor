@@ -131,5 +131,84 @@ function readOtb(fileName) {
   return rootNode;
 }
 
+function writeOtb(fileName, rootNode) {
+  function getPropsLength(node) {
+    let thisNodePropsLength = 0;
+    node.props.forEach(Uint8Value => {
+      if (
+        Uint8Value === NODE_ESC ||
+        Uint8Value === NODE_INIT ||
+        Uint8Value === NODE_TERM
+      )
+        thisNodePropsLength += 2;
+      else thisNodePropsLength += 1;
+    });
+    return thisNodePropsLength;
+  }
+
+  function getLength(node) {
+    let thisNodeSize = 1; // type
+    thisNodeSize += getPropsLength(node);
+    node.children.forEach(child => {
+      const childSize = getLength(child);
+      thisNodeSize += 1 + childSize + 1; // 2 for NODE_INIT and NODE_TERM
+    });
+    return thisNodeSize;
+  }
+
+  function serializeProps(node, data, position) {
+    let i = position;
+    node.props.forEach(Uint8Value => {
+      if (
+        Uint8Value === NODE_ESC ||
+        Uint8Value === NODE_INIT ||
+        Uint8Value === NODE_TERM
+      ) {
+        data.writeUInt8(NODE_ESC, i);
+        i += 1;
+        data.writeUInt8(Uint8Value, i);
+        i += 1;
+      } else {
+        data.writeUInt8(Uint8Value, i);
+        i += 1;
+      }
+    });
+    return i;
+  }
+
+  function serializeNode(node, data, position) {
+    let i = position;
+    const { type } = node;
+    data.writeUInt8(type, i);
+    i += 1;
+
+    i = serializeProps(node, data, i);
+
+    node.children.forEach(child => {
+      data.writeUInt8(NODE_INIT, i);
+      i += 1;
+
+      i = serializeNode(child, data, i);
+
+      data.writeUInt8(NODE_TERM, i);
+      i += 1;
+    });
+    return i;
+  }
+
+  const MAP_IDENTIFIER = 0x00000000; // magic bytes - 0 are universal
+  const size = getLength(rootNode) + 4;
+
+  const data = Buffer.allocUnsafe(size);
+  let i = 0; // offset for buffer writing
+  data.writeUInt32LE(MAP_IDENTIFIER, i);
+  i += 4;
+  i = serializeNode(rootNode, data, i);
+
+  fs.writeFileSync(fileName, data);
+
+  return true;
+}
+
 module.exports.readOtb = readOtb;
-// module.exports.writeOtb = writeOtb;
+module.exports.writeOtb = writeOtb;

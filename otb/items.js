@@ -181,12 +181,12 @@ function loadFromOtb(fileName) {
   return items;
 }
 
-function convertToOtb(items) {
+function saveToOtb(filename, items) {
 
 
   
 }
 
 module.exports.loadFromOtb = loadFromOtb;
-module.exports.convertToOtb = convertToOtb;
+module.exports.saveToOtb = saveToOtb;
 
