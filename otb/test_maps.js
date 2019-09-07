@@ -17,9 +17,10 @@ console.log('Done reading otbm');
 
 const of = '/forgottenserver/map.json';
 
-var transformStream = JSONStream.stringify(``, sep=``, close=`\n`); // JSONstream.stringify(open, sep, close)
+// var transformStream = JSONStream.stringify(``, sep=``, close=`\n`); // JSONstream.stringify(open, sep, close)
+var transformStream = JSONStream.stringify(); // JSONstream.stringify(open, sep, close)
 var outputStream = fs.createWriteStream( __dirname + of );
-transformStream.pipe( outputStream );    
+transformStream.pipe( outputStream );
 transformStream.write( mapsDictionary );
 transformStream.end();
 

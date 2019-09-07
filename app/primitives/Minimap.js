@@ -56,7 +56,20 @@ function* generateTilesForGivenRange(range, mapData) {
     }
 }
 
-export default function({ scale, position, objectsData, spritesData, mapData, itemsData, itemsIdMap, width, height, windowSquaresInX, windowSquaresInY, setPosition }: Props) {
+export default function({
+  scale,
+  position,
+  objectsData,
+  spritesData,
+  mapData,
+  itemsData,
+  itemsIdMap,
+  width,
+  height,
+  windowSquaresInX,
+  windowSquaresInY,
+  setPosition
+}: Props) {
   const singleSpriteSize = singleSpritePixels * scale;
 
   const canvasRef = useRef(null);
@@ -116,20 +129,20 @@ export default function({ scale, position, objectsData, spritesData, mapData, it
 
   return (
     <div>
-        <canvas
-            ref={canvasRef}
-            width={width}
-            height={height}
-            onClick={ e => {
-                let x = e.clientX - canvasRef.current.offsetLeft;
-                let y = e.clientY - canvasRef.current.offsetTop;
-                setPosition({
-                    x: position.x + Math.floor( (x-width/2)/singleSpriteSize ),
-                    y: position.y + Math.floor( (y-height/2)/singleSpriteSize ),
-                    z: position.z
-                });
-            }}
-        />
+      <canvas
+        ref={canvasRef}
+        width={width}
+        height={height}
+        onClick={e => {
+          const x = e.clientX - canvasRef.current.offsetLeft + window.scrollX;
+          const y = e.clientY - canvasRef.current.offsetTop + window.scrollY;
+          setPosition({
+            x: position.x + Math.floor((x - width / 2) / singleSpriteSize),
+            y: position.y + Math.floor((y - height / 2) / singleSpriteSize),
+            z: position.z
+          });
+        }}
+      />
     </div>
   );
 }

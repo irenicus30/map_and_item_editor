@@ -3,7 +3,8 @@ import {
   MAP_SET_POSITION,
   MAP_MOVE_POSITION,
   MAP_CHANGE_MINIMAP_SCALE,
-  MAP_SELECT_TILE
+  MAP_SELECT_TILE,
+  MAP_CHANGE_PANEL_START_INDEX
 } from '../actions/maps';
 import type { Action } from './types';
 
@@ -14,7 +15,8 @@ const defaultMinimapScale = 0.125;
 export default function objects(
   state: object = {
     position: defaultPosition,
-    minimapScale: defaultMinimapScale
+    minimapScale: defaultMinimapScale,
+    itemStartIndex: 0
   },
   action: Action
 ) {
@@ -41,6 +43,9 @@ export default function objects(
 
     case MAP_SELECT_TILE:
       return { ...state, selectedTileId: action.selectedTileId };
+
+    case MAP_CHANGE_PANEL_START_INDEX:
+      return { ...state, itemStartIndex: action.itemStartIndex };
 
     default:
       return state;

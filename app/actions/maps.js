@@ -7,6 +7,7 @@ export const MAP_CHANGE_MINIMAP_SCALE = 'MAP_CHANGE_MINIMAP_SCALE';
 export const MAP_SELECT_TILE = 'MAP_SELECT_TILE';
 export const MAP_UPDATE = 'MAP_UPDATE';
 export const MAP_DELETE = 'MAP_DELETE';
+export const MAP_CHANGE_PANEL_START_INDEX = 'MAP_CHANGE_PANEL_START_INDEX';
 
 export function setPosition(position: object) {
   return {
@@ -53,4 +54,14 @@ export function mapDelete(toDelete: object) {
   return {
     type: MAP_DELETE
   }
+}
+
+export function changePanelStartId(textFieldValue: string) {
+  let value = parseInt(textFieldValue, 10);
+  if (!value) value = 0;
+  if (value < 0) value = 0;
+  return {
+    type: MAP_CHANGE_PANEL_START_INDEX,
+    itemStartIndex: value
+  };
 }

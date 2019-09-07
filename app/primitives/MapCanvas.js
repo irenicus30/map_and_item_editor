@@ -60,16 +60,16 @@ function* generateTilesForGivenRange(range, mapData) {
 }
 
 export default function({
-    scale,
-    position,
-    objectsData,
-    spritesData,
-    mapData,
-    itemsData,
-    itemsIdMap,
-    windowSquaresInX,
-    windowSquaresInY,
-    selectTile
+  scale,
+  position,
+  objectsData,
+  spritesData,
+  mapData,
+  itemsData,
+  itemsIdMap,
+  windowSquaresInX,
+  windowSquaresInY,
+  selectTile
 }: Props) {
   const singleSpriteSize = singleSpritePixels * scale;
   const width = singleSpriteSize * windowSquaresInX;
@@ -145,8 +145,8 @@ export default function({
         width={width}
         height={height}
         onClick={e => {
-          const x = e.clientX - canvasRef.current.offsetLeft;
-          const y = e.clientY - canvasRef.current.offsetTop;
+          const x = e.clientX - canvasRef.current.offsetLeft + window.scrollX;
+          const y = e.clientY - canvasRef.current.offsetTop + window.scrollY;
           const selectedPosition = {
             x: position.x + Math.floor( (x-width/2)/singleSpriteSize + 1/2),
             y: position.y + Math.floor( (y-height/2)/singleSpriteSize + 1/2),

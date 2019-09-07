@@ -52,7 +52,7 @@ export function loadItemsData(rootPath, pathToItems) {
 export function getItemsIdMap(itemsData) {
     const itemsIdMap = {};
     for(let item of itemsData) {
-        console.log(item)
+        // console.log(item)
         if (item) {
             itemsIdMap[item.id] = item.clientId;
         }

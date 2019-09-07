@@ -53,6 +53,7 @@ type Props = {
   movePosition: (delta: object) => void,
   changeMinimapScale: (newScale: number) => void,
   selectTile: (key: any) => void,
+  changePanelStartId: (value: string) => void,
   maps: object
 };
 
@@ -65,6 +66,7 @@ export default function(props: Props) {
     movePosition,
     changeMinimapScale,
     selectTile,
+    changePanelStartId,
     shared,
     maps
   } = props;
@@ -76,13 +78,14 @@ export default function(props: Props) {
     itemsIdMap
   } = shared;
   const {
+    itemStartIndex,
     position,
     minimapScale,
     selectedTileId
   } = maps;
 
-  let itemStartId = 0;
-  const itemEndId = itemStartId + objectsInX * objectsInY;
+  const objectsOnPanel = objectsInX * objectsInY;
+  const itemEndIndex = itemStartIndex + objectsOnPanel;
   const cardWidth = singleSpritePixels * windowSquaresInX;
   const cardHeight =
     singleSpritePixels * scale * windowSquaresInY -
@@ -312,7 +315,7 @@ export default function(props: Props) {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={12} className={classes.column}>
+        <Grid item xs={12} sm={8} className={classes.column}>
           <div
             style={{
               width: singleObjectSize * objectsInX,
@@ -322,7 +325,7 @@ export default function(props: Props) {
             }}
           >
             {Object.keys(objectsData.items)
-              .slice(itemStartId, itemEndId)
+              .slice(itemStartIndex, itemEndIndex)
               .map(objectId => {
                 const data = objectsData.items[objectId];
                 return (
@@ -344,6 +347,31 @@ export default function(props: Props) {
                 );
               })}
           </div>
+        </Grid>
+        
+        <Grid item xs={12} sm={4} className={classes.column}>
+          <Card className={classes.card}>
+            <CardContent>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={() =>
+                  changePanelStartId(itemStartIndex - objectsOnPanel)
+                }
+              >
+                Prev {objectsOnPanel} objects
+              </Button>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={() =>
+                  changePanelStartId(itemStartIndex + objectsOnPanel)
+                }
+              >
+                Next {objectsOnPanel} objects
+              </Button>
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
     </div>

@@ -29,4 +29,3 @@ export function changeTileset(pathToData: string) {
     itemsIdMap
   };
 }
-
