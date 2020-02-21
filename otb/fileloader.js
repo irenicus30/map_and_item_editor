@@ -184,15 +184,17 @@ function writeOtb(fileName, rootNode) {
 
     i = serializeProps(node, data, i);
 
-    node.children.forEach(child => {
-      data.writeUInt8(NODE_INIT, i);
-      i += 1;
+    if (node.children !== undefined) {
+      node.children.forEach(child => {
+        data.writeUInt8(NODE_INIT, i);
+        i += 1;
 
-      i = serializeNode(child, data, i);
+        i = serializeNode(child, data, i);
 
-      data.writeUInt8(NODE_TERM, i);
-      i += 1;
-    });
+        data.writeUInt8(NODE_TERM, i);
+        i += 1;
+      });
+    }
     return i;
   }
 

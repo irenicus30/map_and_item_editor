@@ -39,6 +39,15 @@ function readFlags(flags) {
         'refresh': flags & mapsloader.TILESTATE_REFRESH
     };
 }
+function serializeFlags(zones) {
+    let flags = 0x0;
+    if(zones.protection === mapsloader.TILESTATE_PROTECTIONZONE) flags |= mapsloader.TILESTATE_PROTECTIONZONE;
+    if(zones.noPVP === mapsloader.TILESTATE_NOPVP) flags |= mapsloader.TILESTATE_NOPVP;
+    if(zones.noLogout === mapsloader.TILESTATE_NOLOGOUT) flags |= mapsloader.TILESTATE_NOLOGOUT;
+    if(zones.PVPZone === mapsloader.TILESTATE_PVPZONE) flags |= mapsloader.TILESTATE_PVPZONE;
+    if(zones.refresh === mapsloader.TILESTATE_REFRESH) flags |= mapsloader.TILESTATE_REFRESH;
+    return flags;
+}
 
 function loadFromOtbm(fileName) {
 
@@ -346,38 +355,38 @@ function loadFromOtbm(fileName) {
             case 'OTBM_TILE_AREA': {
                 this.tiles = children
                     .map( child => new Node(child) );
-                    break;
+                break;
             }
 
             case 'OTBM_TILE':
             case 'OTBM_HOUSETILE': {
                 this.items = children
-                .map( child => new Node(child) );
-                    break;
+                    .map( child => new Node(child) );
+                break;
             }
 
             case 'OTBM_TOWNS': {
                 this.towns = children
-                .map( child => new Node(child) );
-                    break;
+                    .map( child => new Node(child) );
+                break;
             }
 
             case 'OTBM_ITEM': {
                 this.content = children
-                .map( child => new Node(child) );
-                    break;
+                    .map( child => new Node(child) );
+                break;
             }
 
             case 'OTBM_MAP_DATA': {
                 this.features = children
-                .map( child => new Node(child) );
-                    break;
+                    .map( child => new Node(child) );
+                break;
             }
 
             default: {
                 this.nodes = children
-                .map( child => new Node(child) );
-                    break;
+                    .map( child => new Node(child) );
+                break;
             }
         }
     }
@@ -452,13 +461,129 @@ function saveToOtbm(fileName, mapData) {
     }
 
 
-
-    }
-
     function putAttributesIntoBuffer(node, buffer, position) {
         let i = position;
-
-
+        
+        if(node.text !== undefined) {
+            buffer.writeUInt8(mapsloader.OTBM_ATTR_TEXT, i);
+            i += 1;
+            buffer.writeUInt16LE(node.text.length, i);
+            i += 2;
+            buffer.write(node.text, i, node.text.length);
+            i += node.text.length;
+            // attrib text.length text
+        }
+        if(node.spawnFile !== undefined) {
+            buffer.writeUInt8(mapsloader.OTBM_ATTR_EXT_SPAWN_FILE, i);
+            i += 1;
+            buffer.writeUInt16LE(node.spawnFile.length, i);
+            i += 2;
+            buffer.write(node.spawnFile, i, node.spawnFile.length);
+            i += node.spawnFile.length;
+            // attrib spawnFile.length spawnFile
+        }
+        if(node.houseFile !== undefined) {
+            buffer.writeUInt8(mapsloader.OTBM_ATTR_EXT_HOUSE_FILE, i);
+            i += 1;
+            buffer.writeUInt16LE(node.houseFile.length, i);
+            i += 2;
+            buffer.write(node.houseFile, i, node.houseFile.length);
+            i += node.houseFile.length;
+            // attrib houseFile.length houseFile
+        }
+        if(node.houseDoorId !== undefined) {
+            buffer.writeUInt8(mapsloader.OTBM_ATTR_HOUSEDOORID, i);
+            i += 1;
+            buffer.writeUInt8(node.houseDoorId, i);
+            i += 1;
+            // attrib houseDoorId
+        }
+        if(node.description !== undefined) {
+            buffer.writeUInt8(mapsloader.OTBM_ATTR_DESCRIPTION, i);
+            i += 1;
+            buffer.writeUInt16LE(node.description.length, i);
+            i += 2;
+            buffer.write(node.description, i, node.description.length);
+            i += node.description.length;
+            // attrib description.length description
+        }
+        if(node.depotId !== undefined) {
+            buffer.writeUInt8(mapsloader.OTBM_ATTR_DEPOT_ID, i);
+            i += 1;
+            buffer.writeUInt16LE(node.depotId, i);
+            i += 2;
+            // attrib depotId
+        }
+        if(node.depotId !== undefined) {
+            buffer.writeUInt8(mapsloader.OTBM_ATTR_TILE_FLAGS, i);
+            i += 1;            
+            const flags = serializeFlags(node.zones);
+            buffer.writeUInt32LE(flags, i);
+            i += 4;
+            // attrib flags
+        }
+        if(node.runeCharges !== undefined) {
+            buffer.writeUInt8(mapsloader.OTBM_ATTR_RUNE_CHARGES, i);
+            i += 1;
+            buffer.writeUInt8(node.runeCharges, i);
+            i += 1;
+            // attrib runeCharges
+        }
+        if(node.count !== undefined) {
+            buffer.writeUInt8(mapsloader.OTBM_ATTR_CHARGES, i);
+            i += 1;
+            buffer.writeUInt16LE(node.count, i);
+            i += 2;
+            // attrib count
+        }
+        if(node.tileid !== undefined) {
+            buffer.writeUInt8(mapsloader.OTBM_ATTR_ITEM, i);
+            i += 1;
+            buffer.writeUInt16LE(node.tileid, i);
+            i += 2;
+            // attrib tileid
+        }
+        if(node.aid !== undefined) {
+            buffer.writeUInt8(mapsloader.OTBM_ATTR_ACTION_ID, i);
+            i += 1;
+            buffer.writeUInt16LE(node.aid, i);
+            i += 2;
+            // attrib aid
+        }
+        if(node.uid !== undefined) {
+            buffer.writeUInt8(mapsloader.OTBM_ATTR_UNIQUE_ID, i);
+            i += 1;
+            buffer.writeUInt16LE(node.uid, i);
+            i += 2;
+            // attrib uid
+        }
+        if(node.destination !== undefined) {
+            buffer.writeUInt8(mapsloader.OTBM_ATTR_TELE_DEST, i);
+            i += 1;
+            buffer.writeUInt16LE(node.destination.x, i);
+            i += 2;
+            buffer.writeUInt16LE(node.destination.y, i);
+            i += 2;
+            buffer.writeUInt8(node.destination.z, i);
+            i += 1;
+            // attrib destination
+        }
+        if(node.writtendate !== undefined) {
+            buffer.writeUInt8(mapsloader.OTBM_ATTR_WRITTENDATE, i);
+            i += 1;
+            buffer.writeUInt16LE(node.destination.x, i);
+            i += 2;
+            size += 1 + 4; // attrib writtendate
+        }
+        if(node.writtenby !== undefined) {
+            buffer.writeUInt8(mapsloader.OTBM_ATTR_WRITTENBY, i);
+            i += 1;
+            buffer.writeUInt16LE(node.writtenby.length, i);
+            i += 2;
+            buffer.write(node.writtenby, i, node.writtenby.length);
+            i += node.writtenby.length;
+            // attrib writtenby.length writtenby
+        }
 
         return i;
     }
@@ -644,8 +769,45 @@ function saveToOtbm(fileName, mapData) {
                 console.log('Warning: unsupported node type ', node.type);
             }
         }
-        rawNode.children = [];
 
+        let childrenBeforeMap = [];
+
+        switch (node.type) {
+            case 'OTBM_TILE_AREA': {
+                childrenBeforeMap = node.tiles;
+                break;
+            }
+
+            case 'OTBM_TILE':
+            case 'OTBM_HOUSETILE': {
+                childrenBeforeMap = node.items;
+                break;
+            }
+
+            case 'OTBM_TOWNS': {
+                childrenBeforeMap = node.towns;
+                break;
+            }
+
+            case 'OTBM_ITEM': {
+                childrenBeforeMap = node.content;
+                break;
+            }
+
+            case 'OTBM_MAP_DATA': {
+                childrenBeforeMap = node.features;
+                break;
+            }
+
+            default: {
+                childrenBeforeMap = node.nodes;
+                break;
+            }
+        }
+        rawNode.children = childrenBeforeMap.map(child => getRawData(child));
+
+
+        return rawNode;
     }
 
     const root = getRawData(map);
